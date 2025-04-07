@@ -11,6 +11,8 @@ interface PinboardContextType {
   reorderItems: (items: PinboardItem[]) => void
   showCompleted: boolean
   toggleShowCompleted: () => void
+  newItemIds: Set<string>
+  removingItemIds: Set<string>
 }
 
 const PinboardContext = createContext<PinboardContextType | undefined>(
@@ -29,6 +31,8 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<PinboardItem[]>([])
   const [completedItems, setCompletedItems] = useState<PinboardItem[]>([])
   const [showCompleted, setShowCompleted] = useState(false)
+  const [newItemIds, setNewItemIds] = useState<Set<string>>(new Set())
+  const [removingItemIds, setRemovingItemIds] = useState<Set<string>>(new Set())
 
   // Load items from storage on initial render
   useEffect(() => {
@@ -75,6 +79,18 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
       order: items.length,
     }
 
+    // Add the new item ID to the set of new items
+    setNewItemIds((prev) => new Set(prev).add(newItem.id))
+
+    // Remove the item from the new items set after animation completes
+    setTimeout(() => {
+      setNewItemIds((prev) => {
+        const updated = new Set(prev)
+        updated.delete(newItem.id)
+        return updated
+      })
+    }, 500) // Animation duration
+
     setItems((prevItems) => [...prevItems, newItem])
   }
 
@@ -90,15 +106,43 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     const itemToComplete = items.find((item) => item.id === id)
     if (!itemToComplete) return
 
-    const completedItem = { ...itemToComplete, completed: true }
+    // Add the item to the removing set for animation
+    setRemovingItemIds((prev) => new Set(prev).add(id))
 
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id))
-    setCompletedItems((prevItems) => [...prevItems, completedItem])
+    // Wait for animation to complete before removing
+    setTimeout(() => {
+      const completedItem = { ...itemToComplete, completed: true }
+
+      setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+      setCompletedItems((prevItems) => [...prevItems, completedItem])
+
+      // Remove from the removing set
+      setRemovingItemIds((prev) => {
+        const updated = new Set(prev)
+        updated.delete(id)
+        return updated
+      })
+    }, 500) // Animation duration
   }
 
   const deleteItem = (id: string) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id))
-    setCompletedItems((prevItems) => prevItems.filter((item) => item.id !== id))
+    // Add the item to the removing set for animation
+    setRemovingItemIds((prev) => new Set(prev).add(id))
+
+    // Wait for animation to complete before removing
+    setTimeout(() => {
+      setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+      setCompletedItems((prevItems) =>
+        prevItems.filter((item) => item.id !== id),
+      )
+
+      // Remove from the removing set
+      setRemovingItemIds((prev) => {
+        const updated = new Set(prev)
+        updated.delete(id)
+        return updated
+      })
+    }, 500) // Animation duration
   }
 
   const reorderItems = (reorderedItems: PinboardItem[]) => {
@@ -125,6 +169,8 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     reorderItems,
     showCompleted,
     toggleShowCompleted,
+    newItemIds,
+    removingItemIds,
   }
 
   return (

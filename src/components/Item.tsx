@@ -1,4 +1,5 @@
 import { usePinboard } from '../context/PinboardContext'
+import { cn } from '../lib/utils'
 import type { PinboardItem } from '../types'
 import { LongPressButton } from './LongPressButton'
 
@@ -9,7 +10,10 @@ interface ItemProps {
 }
 
 export function Item({ item, onDragStart, onDragOver }: ItemProps) {
-  const { completeItem, deleteItem } = usePinboard()
+  const { completeItem, deleteItem, newItemIds, removingItemIds } =
+    usePinboard()
+  const isNewItem = newItemIds.has(item.id)
+  const isRemoving = removingItemIds.has(item.id)
 
   // Format deadline if it exists
   const formattedDeadline = item.deadline
@@ -27,7 +31,11 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
       draggable
       onDragStart={() => onDragStart(item.id)}
       onDragOver={() => onDragOver(item.id)}
-      className="mb-2 flex cursor-grab items-center justify-between rounded-lg bg-white p-3 shadow-sm hover:shadow-md"
+      className={cn(
+        'mb-2 flex cursor-grab items-center justify-between rounded-lg bg-white p-3 shadow-sm transition-all duration-500 hover:shadow-md',
+        isNewItem ? 'animate-slide-in' : '',
+        isRemoving ? 'animate-fade-out' : '',
+      )}
     >
       <div className="flex-1">
         <h3 className="font-medium">{item.title}</h3>
