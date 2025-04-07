@@ -6,7 +6,6 @@ export function ItemForm() {
   const [title, setTitle] = useState('')
   const [deadline, setDeadline] = useState<string>('')
   const [tags, setTags] = useState<string>('')
-  const [isExpanded, setIsExpanded] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,7 +26,6 @@ export function ItemForm() {
     setTitle('')
     setDeadline('')
     setTags('')
-    setIsExpanded(false)
   }
 
   return (
@@ -46,52 +44,46 @@ export function ItemForm() {
         />
       </div>
 
-      {isExpanded && (
-        <>
-          <div className="mb-4">
+      <div className="mb-4 grid grid-cols-2 gap-3">
+        <div>
+          <div className="mb-1 flex items-center">
             <label
               htmlFor="deadline-input"
-              className="mb-1 block font-medium text-gray-700 text-sm"
+              className="font-medium text-gray-700 text-xs"
             >
               期限（任意）
             </label>
-            <input
-              id="deadline-input"
-              type="datetime-local"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-            />
           </div>
+          <input
+            id="deadline-input"
+            type="date"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="w-full rounded-md border border-gray-300 p-1.5 text-sm focus:border-blue-500 focus:outline-none"
+          />
+        </div>
 
-          <div className="mb-4">
+        <div>
+          <div className="mb-1 flex items-center">
             <label
               htmlFor="tags-input"
-              className="mb-1 block font-medium text-gray-700 text-sm"
+              className="font-medium text-gray-700 text-xs"
             >
-              タグ（任意、カンマ区切り）
+              タグ（カンマ区切り）
             </label>
-            <input
-              id="tags-input"
-              type="text"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-              placeholder="仕事, 個人, 重要"
-              className="w-full rounded-md border border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
-            />
           </div>
-        </>
-      )}
+          <input
+            id="tags-input"
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="仕事, 個人, 重要"
+            className="w-full rounded-md border border-gray-300 p-1.5 text-sm focus:border-blue-500 focus:outline-none"
+          />
+        </div>
+      </div>
 
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-gray-500 text-sm hover:text-gray-700"
-        >
-          {isExpanded ? '詳細を隠す' : '詳細を表示'}
-        </button>
-
+      <div className="flex justify-end">
         <button
           type="submit"
           className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
