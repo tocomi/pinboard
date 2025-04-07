@@ -1,11 +1,21 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useState } from 'react'
 import { usePinboard } from '../context/PinboardContext'
+
+// タグのプリセット
+const TAG_PRESETS = ['ToDo', 'やりたい', '目標']
 
 export function ItemForm() {
   const { addItem } = usePinboard()
   const [title, setTitle] = useState('')
   const [deadline, setDeadline] = useState<string>('')
-  const [tags, setTags] = useState<string>('')
+  const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -13,19 +23,14 @@ export function ItemForm() {
     if (!title.trim()) return
 
     const deadlineDate = deadline ? new Date(deadline) : undefined
-    const tagsList = tags
-      ? tags
-          .split(',')
-          .map((tag) => tag.trim())
-          .filter(Boolean)
-      : undefined
+    const tagsList = selectedTag ? [selectedTag] : undefined
 
     addItem(title, deadlineDate, tagsList)
 
     // Reset form
     setTitle('')
     setDeadline('')
-    setTags('')
+    setSelectedTag(undefined)
   }
 
   return (
@@ -64,22 +69,28 @@ export function ItemForm() {
         </div>
 
         <div>
-          <div className="mb-1 flex items-center">
-            <label
-              htmlFor="tags-input"
-              className="font-medium text-gray-700 text-xs"
-            >
-              タグ（カンマ区切り）
-            </label>
+          <div>
+            <div className="mb-1 flex items-center">
+              <label
+                htmlFor="tag-select"
+                className="font-medium text-gray-700 text-xs"
+              >
+                タグ（選択）
+              </label>
+            </div>
+            <Select value={selectedTag} onValueChange={setSelectedTag}>
+              <SelectTrigger id="tag-select" className="w-full">
+                <SelectValue placeholder="タグを選択" />
+              </SelectTrigger>
+              <SelectContent>
+                {TAG_PRESETS.map((tag) => (
+                  <SelectItem key={tag} value={tag}>
+                    {tag}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <input
-            id="tags-input"
-            type="text"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            placeholder="仕事, 個人, 重要"
-            className="w-full rounded-md border border-gray-300 p-1.5 text-sm focus:border-blue-500 focus:outline-none"
-          />
         </div>
       </div>
 
