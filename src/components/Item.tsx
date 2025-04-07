@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
 import { usePinboard } from '../context/PinboardContext'
 import type { PinboardItem } from '../types'
+import { LongPressButton } from './LongPressButton'
 
 interface ItemProps {
   item: PinboardItem
@@ -10,10 +10,6 @@ interface ItemProps {
 
 export function Item({ item, onDragStart, onDragOver }: ItemProps) {
   const { completeItem, deleteItem } = usePinboard()
-  const [isLongPressing, setIsLongPressing] = useState(false)
-  const [longPressProgress, setLongPressProgress] = useState(0)
-  const longPressTimerRef = useRef<number | null>(null)
-  const progressTimerRef = useRef<number | null>(null)
 
   // Format deadline if it exists
   const formattedDeadline = item.deadline
@@ -25,45 +21,6 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
         minute: '2-digit',
       })
     : null
-
-  const handleLongPressStart = () => {
-    setIsLongPressing(true)
-    setLongPressProgress(0)
-
-    // Start progress animation
-    let progress = 0
-    progressTimerRef.current = window.setInterval(() => {
-      progress += 2
-      setLongPressProgress(Math.min(progress, 100))
-
-      if (progress >= 100 && progressTimerRef.current) {
-        clearInterval(progressTimerRef.current)
-      }
-    }, 20) // Update every 20ms for smooth animation
-
-    // Complete after 2 seconds
-    longPressTimerRef.current = window.setTimeout(() => {
-      completeItem(item.id)
-      if (progressTimerRef.current) {
-        clearInterval(progressTimerRef.current)
-      }
-    }, 2000)
-  }
-
-  const handleLongPressEnd = () => {
-    setIsLongPressing(false)
-    setLongPressProgress(0)
-
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current)
-      longPressTimerRef.current = null
-    }
-
-    if (progressTimerRef.current) {
-      clearInterval(progressTimerRef.current)
-      progressTimerRef.current = null
-    }
-  }
 
   return (
     <div
@@ -95,48 +52,19 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
         )}
       </div>
 
-      <div className="ml-4 flex items-center">
-        <button
-          type="button"
-          className="relative mr-2 h-8 w-8 rounded-full bg-green-100 text-green-600 hover:bg-green-200"
-          onMouseDown={handleLongPressStart}
-          onMouseUp={handleLongPressEnd}
-          onMouseLeave={handleLongPressEnd}
-          onTouchStart={handleLongPressStart}
-          onTouchEnd={handleLongPressEnd}
-        >
-          <span className="absolute inset-0 flex items-center justify-center">
-            ✓
-          </span>
-
-          {isLongPressing && (
-            <svg
-              className="absolute inset-0"
-              viewBox="0 0 36 36"
-              aria-label="完了進行状況"
-            >
-              <title>Progress</title>
-              <circle
-                className="stroke-green-600"
-                cx="18"
-                cy="18"
-                r="16"
-                fill="none"
-                strokeWidth="2"
-                strokeDasharray={`${longPressProgress} 100`}
-                transform="rotate(-90 18 18)"
-              />
-            </svg>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => deleteItem(item.id)}
-          className="h-8 w-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200"
-        >
-          ×
-        </button>
+      <div className="ml-4 flex items-center gap-2">
+        <LongPressButton
+          color="green"
+          icon="✓"
+          label="完了"
+          onLongPressComplete={() => completeItem(item.id)}
+        />
+        <LongPressButton
+          color="red"
+          icon="×"
+          label="削除"
+          onLongPressComplete={() => deleteItem(item.id)}
+        />
       </div>
     </div>
   )
