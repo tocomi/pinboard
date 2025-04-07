@@ -13,6 +13,8 @@ interface PinboardContextType {
   toggleShowCompleted: () => void
   newItemIds: Set<string>
   removingItemIds: Set<string>
+  celebratingItemId: string | null
+  setCelebratingItemId: (id: string | null) => void
 }
 
 const PinboardContext = createContext<PinboardContextType | undefined>(
@@ -33,6 +35,9 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
   const [showCompleted, setShowCompleted] = useState(false)
   const [newItemIds, setNewItemIds] = useState<Set<string>>(new Set())
   const [removingItemIds, setRemovingItemIds] = useState<Set<string>>(new Set())
+  const [celebratingItemId, setCelebratingItemId] = useState<string | null>(
+    null,
+  )
 
   // Load items from storage on initial render
   useEffect(() => {
@@ -106,6 +111,9 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     const itemToComplete = items.find((item) => item.id === id)
     if (!itemToComplete) return
 
+    // お祝いエフェクトを表示
+    setCelebratingItemId(id)
+
     // Add the item to the removing set for animation
     setRemovingItemIds((prev) => new Set(prev).add(id))
 
@@ -171,6 +179,8 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     toggleShowCompleted,
     newItemIds,
     removingItemIds,
+    celebratingItemId,
+    setCelebratingItemId,
   }
 
   return (

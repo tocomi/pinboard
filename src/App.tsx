@@ -1,12 +1,15 @@
+import { CelebrationEffect } from './components/CelebrationEffect'
 import { CompletedItems } from './components/CompletedItems'
 import { ItemForm } from './components/ItemForm'
 import { ItemList } from './components/ItemList'
 import { ToggleCompletedButton } from './components/ToggleCompletedButton'
-import { PinboardProvider } from './context/PinboardContext'
+import { PinboardProvider, usePinboard } from './context/PinboardContext'
 
-export function App() {
+function AppContent() {
+  const { celebratingItemId, setCelebratingItemId } = usePinboard()
+
   return (
-    <PinboardProvider>
+    <>
       <div className="flex min-h-screen flex-col items-center bg-gray-100 p-4 pb-32">
         <header>
           <h1 className="mb-6 text-center font-bold text-4xl">Pinboard</h1>
@@ -22,6 +25,18 @@ export function App() {
           </div>
         </div>
       </div>
+
+      {celebratingItemId && (
+        <CelebrationEffect onComplete={() => setCelebratingItemId(null)} />
+      )}
+    </>
+  )
+}
+
+export function App() {
+  return (
+    <PinboardProvider>
+      <AppContent />
     </PinboardProvider>
   )
 }

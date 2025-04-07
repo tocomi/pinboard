@@ -155,10 +155,69 @@ code {
   }
 }
 
+@keyframes confetti-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2) rotate(90deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+  75% {
+    opacity: 0.7;
+    transform: scale(1.1) rotate(270deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8) rotate(360deg);
+  }
+}
+
+@keyframes celebration-scale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes celebration-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .animate-slide-in {
   animation: slide-in 0.5s ease-out forwards;
 }
 
 .animate-fade-out {
   animation: fade-out 0.5s ease-out forwards;
+}
+
+.animate-confetti {
+  animation: confetti-appear 2s ease-in-out forwards;
+}
+
+.animate-celebration {
+  animation: celebration-scale 0.5s ease-out forwards;
+}
+
+.animate-celebration-rotate {
+  animation: celebration-rotate 1s linear infinite;
 }
