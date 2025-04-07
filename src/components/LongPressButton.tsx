@@ -40,21 +40,21 @@ export function LongPressButton({
     // Start progress animation
     let progress = 0
     progressTimerRef.current = window.setInterval(() => {
-      progress += 1
+      progress += 2
       setLongPressProgress(Math.min(progress, 100))
 
       if (progress >= 100 && progressTimerRef.current) {
         clearInterval(progressTimerRef.current)
       }
-    }, 20) // Update every 20ms for smooth animation (1% per 20ms = 100% in 2000ms)
+    }, 20) // Update every 20ms for smooth animation (2% per 20ms = 100% in 1000ms)
 
-    // Complete after 2 seconds
+    // Complete after 1 second
     longPressTimerRef.current = window.setTimeout(() => {
       onLongPressComplete()
       if (progressTimerRef.current) {
         clearInterval(progressTimerRef.current)
       }
-    }, 2000)
+    }, 1000)
   }
 
   const handleLongPressEnd = () => {
