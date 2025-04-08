@@ -67,7 +67,7 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
           </div>
         </div>
 
-        <div className="ml-2 flex items-center gap-2">
+        <div className="ml-2 flex min-h-10 items-center gap-2">
           <LongPressButton
             color="green"
             icon="✓"
