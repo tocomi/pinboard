@@ -5,13 +5,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { X } from 'lucide-react'
 import { useState } from 'react'
 import { usePinboard } from '../context/PinboardContext'
+import { cn } from '../lib/utils'
 
 // タグのプリセット
 const TAG_PRESETS = ['ToDo', 'やりたい', '目標']
 
-export function ItemForm() {
+interface ItemFormProps {
+  onClose?: () => void
+}
+
+export function ItemForm({ onClose }: ItemFormProps) {
   const { addItem } = usePinboard()
   const [title, setTitle] = useState('')
   const [deadline, setDeadline] = useState<string>('')
@@ -36,8 +42,22 @@ export function ItemForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-6 w-full max-w-md rounded-lg bg-white p-4 shadow-md"
+      className="relative mb-6 w-full max-w-md rounded-lg bg-white p-4 pt-10 shadow-md"
     >
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className={cn(
+            'absolute top-1 right-3 flex h-8 w-8 items-center justify-center',
+            'rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700',
+            'cursor-pointer focus:outline-none',
+          )}
+          aria-label="フォームを閉じる"
+        >
+          <X size={18} aria-hidden="true" />
+        </button>
+      )}
       <div className="mb-4">
         <input
           type="text"
@@ -97,7 +117,7 @@ export function ItemForm() {
       <div className="flex justify-end">
         <button
           type="submit"
-          className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
+          className="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
         >
           追加
         </button>
