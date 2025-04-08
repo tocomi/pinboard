@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
@@ -11,6 +11,15 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const manifestContent = fs.readFileSync('./manifest.json', 'utf-8')
 
 export default defineConfig({
+  test: {
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    browser: {
+      enabled: true,
+      provider: 'playwright',
+      name: 'chromium',
+    },
+  },
   plugins: [
     react(),
     tailwindcss(),
