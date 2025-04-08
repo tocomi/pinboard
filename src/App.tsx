@@ -1,7 +1,8 @@
-import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useState } from 'react'
 import { CelebrationEffect } from './components/CelebrationEffect'
 import { CompletedItems } from './components/CompletedItems'
+import { FloatingButton } from './components/FloatingButton'
 import { ItemForm } from './components/ItemForm'
 import { ItemList } from './components/ItemList'
 import { ToggleCompletedButton } from './components/ToggleCompletedButton'
@@ -29,19 +30,13 @@ function AppContent() {
       </div>
 
       {/* フローティングボタン */}
-      <button
-        type="button"
+      <FloatingButton
         onClick={openForm}
-        className={cn(
-          '-translate-x-1/2 fixed bottom-6 left-1/2 z-10 flex h-14 w-14 items-center justify-center',
-          'rounded-full bg-blue-500 text-white shadow-lg transition-all hover:bg-blue-600',
-          'focus:outline-none',
-          isFormOpen ? 'scale-0' : 'scale-100',
-        )}
-        aria-label="アイテムを追加"
+        isHidden={isFormOpen}
+        label="アイテムを追加"
       >
         <Plus size={24} aria-hidden="true" />
-      </button>
+      </FloatingButton>
 
       {/* フォームコンテナ */}
       <div
