@@ -41,7 +41,7 @@ export function ItemForm({ onClose }: ItemFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative mb-6 w-full max-w-md rounded-lg bg-white p-4 shadow-md"
+      className="relative mb-6 w-full max-w-md rounded-lg bg-white p-4 pt-12 shadow-md"
     >
       {onClose && (
         <button
