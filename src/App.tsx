@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { CelebrationEffect } from './components/CelebrationEffect'
 import { CompletedItems } from './components/CompletedItems'
 import { ItemForm } from './components/ItemForm'
@@ -39,22 +40,7 @@ function AppContent() {
         )}
         aria-label="アイテムを追加"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          role="img"
-          aria-labelledby="addButtonTitle"
-        >
-          <title id="addButtonTitle">追加</title>
-          <path d="M12 5v14M5 12h14" />
-        </svg>
+        <Plus size={24} aria-hidden="true" />
       </button>
 
       {/* フォームコンテナ */}
