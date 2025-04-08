@@ -75,7 +75,7 @@ export function LongPressButton({
   return (
     <button
       type="button"
-      className={`relative h-8 w-8 rounded-full ${colorClasses[color].bg} ${colorClasses[color].text} ${colorClasses[color].hover}`}
+      className={`relative h-8 w-8 cursor-pointer rounded-full ${colorClasses[color].bg} ${colorClasses[color].text} ${colorClasses[color].hover}`}
       onMouseDown={handleLongPressStart}
       onMouseUp={handleLongPressEnd}
       onMouseLeave={handleLongPressEnd}

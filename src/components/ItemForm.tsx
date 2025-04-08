@@ -51,7 +51,7 @@ export function ItemForm({ onClose }: ItemFormProps) {
           className={cn(
             'absolute top-1 right-3 flex h-8 w-8 items-center justify-center',
             'rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700',
-            'focus:outline-none',
+            'cursor-pointer focus:outline-none',
           )}
           aria-label="フォームを閉じる"
         >
@@ -117,7 +117,7 @@ export function ItemForm({ onClose }: ItemFormProps) {
       <div className="flex justify-end">
         <button
           type="submit"
-          className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
+          className="cursor-pointer rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:outline-none"
         >
           追加
         </button>
