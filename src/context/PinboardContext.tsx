@@ -4,7 +4,7 @@ import type { PinboardItem } from '../types'
 interface PinboardContextType {
   items: PinboardItem[]
   completedItems: PinboardItem[]
-  addItem: (title: string, deadline?: Date, tags?: string[]) => void
+  addItem: (title: string, deadline?: number, tags?: string[]) => void
   updateItem: (item: PinboardItem) => void
   completeItem: (id: string) => void
   deleteItem: (id: string) => void
@@ -74,7 +74,7 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     saveItems()
   }, [items, completedItems])
 
-  const addItem = (title: string, deadline?: Date, tags?: string[]) => {
+  const addItem = (title: string, deadline?: number, tags?: string[]) => {
     const newItem: PinboardItem = {
       id: crypto.randomUUID(),
       title,

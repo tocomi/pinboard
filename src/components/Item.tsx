@@ -18,7 +18,7 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
   const isNewItem = newItemIds.has(item.id)
   const isRemoving = removingItemIds.has(item.id)
 
-  // Format deadline if it exists
+  // Format deadline if it exists (convert Unix timestamp to Date)
   const formattedDeadline = item.deadline
     ? new Date(item.deadline).toLocaleString('ja-JP', {
         year: 'numeric',
