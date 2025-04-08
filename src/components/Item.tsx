@@ -5,7 +5,6 @@ import type { PinboardItem } from '../types'
 import { LongPressButton } from './LongPressButton'
 import { Badge } from './ui/badge'
 import { Card } from './ui/card'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
 
 interface ItemProps {
   item: PinboardItem
@@ -23,10 +22,8 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
   const formattedDeadline = item.deadline
     ? new Date(item.deadline).toLocaleString('ja-JP', {
         year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
       })
     : null
 
@@ -36,7 +33,7 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
       onDragStart={() => onDragStart(item.id)}
       onDragOver={() => onDragOver(item.id)}
       className={cn(
-        'mb-2 cursor-grab p-0 py-2 transition-all duration-500 hover:shadow-md',
+        'mb-2 min-h-[58px] cursor-grab p-0 py-2 transition-all duration-500 hover:shadow-md',
         isNewItem ? 'animate-slide-in' : '',
         isRemoving ? 'animate-fade-out' : '',
       )}
@@ -71,33 +68,18 @@ export function Item({ item, onDragStart, onDragOver }: ItemProps) {
         </div>
 
         <div className="ml-2 flex items-center gap-2">
-          <HoverCard>
-            <HoverCardTrigger>
-              <LongPressButton
-                color="green"
-                icon="✓"
-                label="完了"
-                onLongPressComplete={() => completeItem(item.id)}
-              />
-            </HoverCardTrigger>
-            <HoverCardContent className="p-2 text-xs">
-              長押しで完了にします
-            </HoverCardContent>
-          </HoverCard>
-
-          <HoverCard>
-            <HoverCardTrigger>
-              <LongPressButton
-                color="red"
-                icon="×"
-                label="削除"
-                onLongPressComplete={() => deleteItem(item.id)}
-              />
-            </HoverCardTrigger>
-            <HoverCardContent className="p-2 text-xs">
-              長押しで削除します
-            </HoverCardContent>
-          </HoverCard>
+          <LongPressButton
+            color="green"
+            icon="✓"
+            label="完了"
+            onLongPressComplete={() => completeItem(item.id)}
+          />
+          <LongPressButton
+            color="red"
+            icon="×"
+            label="削除"
+            onLongPressComplete={() => deleteItem(item.id)}
+          />
         </div>
       </div>
     </Card>
