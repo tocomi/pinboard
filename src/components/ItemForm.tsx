@@ -28,10 +28,13 @@ export function ItemForm({ onClose }: ItemFormProps) {
 
     if (!title.trim()) return
 
-    const deadlineDate = deadline ? new Date(deadline) : undefined
+    // Convert date string to Unix timestamp (milliseconds since epoch)
+    const deadlineTimestamp = deadline
+      ? new Date(deadline).getTime()
+      : undefined
     const tagsList = selectedTag ? [selectedTag] : undefined
 
-    addItem(title, deadlineDate, tagsList)
+    addItem(title, deadlineTimestamp, tagsList)
 
     // Reset form
     setTitle('')

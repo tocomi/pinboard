@@ -1,7 +1,7 @@
 export interface PinboardItem {
   id: string
   title: string
-  deadline?: Date
+  deadline?: number
   tags?: string[]
   completed: boolean
   order: number
