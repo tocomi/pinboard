@@ -7,11 +7,16 @@ import {
 } from '@/components/ui/select'
 import { useState } from 'react'
 import { usePinboard } from '../context/PinboardContext'
+import { cn } from '../lib/utils'
 
 // タグのプリセット
 const TAG_PRESETS = ['ToDo', 'やりたい', '目標']
 
-export function ItemForm() {
+interface ItemFormProps {
+  onClose?: () => void
+}
+
+export function ItemForm({ onClose }: ItemFormProps) {
   const { addItem } = usePinboard()
   const [title, setTitle] = useState('')
   const [deadline, setDeadline] = useState<string>('')
@@ -36,8 +41,37 @@ export function ItemForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-6 w-full max-w-md rounded-lg bg-white p-4 shadow-md"
+      className="relative mb-6 w-full max-w-md rounded-lg bg-white p-4 shadow-md"
     >
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className={cn(
+            'absolute top-3 right-3 flex h-8 w-8 items-center justify-center',
+            'rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700',
+            'focus:outline-none',
+          )}
+          aria-label="フォームを閉じる"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            role="img"
+            aria-labelledby="closeButtonTitle"
+          >
+            <title id="closeButtonTitle">閉じる</title>
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      )}
       <div className="mb-4">
         <input
           type="text"
