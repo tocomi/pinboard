@@ -5,8 +5,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useState } from 'react'
 import { X } from 'lucide-react'
+import { useState } from 'react'
 import { usePinboard } from '../context/PinboardContext'
 import { cn } from '../lib/utils'
 
@@ -42,14 +42,14 @@ export function ItemForm({ onClose }: ItemFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative mb-6 w-full max-w-md rounded-lg bg-white p-4 shadow-md"
+      className="relative mb-6 w-full max-w-md rounded-lg bg-white p-4 pt-10 shadow-md"
     >
       {onClose && (
         <button
           type="button"
           onClick={onClose}
           className={cn(
-            'absolute top-3 right-3 flex h-8 w-8 items-center justify-center',
+            'absolute top-1 right-3 flex h-8 w-8 items-center justify-center',
             'rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700',
             'focus:outline-none',
           )}
