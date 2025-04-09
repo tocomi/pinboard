@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { PinboardProvider } from '../../context/PinboardContext'
 import type { PinboardItem } from '../../types'
-import { ItemList } from '../ItemList'
+import { TagBoard } from '../TagBoard'
 
 // Mock chrome.storage API
 const mockChrome = {
@@ -65,13 +65,6 @@ vi.mock('@dnd-kit/sortable', async () => {
   }
 })
 
-// Mock the BoardContainer component
-vi.mock('../BoardContainer', () => ({
-  BoardContainer: () => (
-    <div data-testid="board-container">Board Container</div>
-  ),
-}))
-
 // Mock the Item component
 vi.mock('../Item', () => ({
   Item: ({ item }: { item: PinboardItem }) => (
@@ -79,21 +72,19 @@ vi.mock('../Item', () => ({
   ),
 }))
 
-// Mock the TagBoard component
-vi.mock('../TagBoard', () => ({
-  TagBoard: ({ tag, items }: { tag: string; items: PinboardItem[] }) => (
-    <div data-testid={`tag-board-${tag}`}>
-      <h2>{tag}</h2>
-      {items.map((item) => (
-        <div key={item.id} data-testid={`tag-item-${item.id}`}>
-          {item.title}
-        </div>
-      ))}
+// Mock the Card component
+vi.mock('../ui/card', () => ({
+  Card: ({
+    children,
+    className,
+  }: { children: React.ReactNode; className?: string }) => (
+    <div data-testid="card" className={className}>
+      {children}
     </div>
   ),
 }))
 
-// Mock the PinboardContext
+// Mock items for a specific tag
 const mockItems: PinboardItem[] = [
   {
     id: '1',
@@ -103,43 +94,19 @@ const mockItems: PinboardItem[] = [
     tags: ['ToDo'],
   },
   {
-    id: '2',
-    title: 'Item 2',
+    id: '4',
+    title: 'Item 4',
     completed: false,
-    order: 1,
-    tags: ['やりたい'],
-  },
-  {
-    id: '3',
-    title: 'Item 3',
-    completed: false,
-    order: 2,
-    tags: ['目標'],
+    order: 3,
+    tags: ['ToDo'],
   },
 ]
 
 const mockReorderItems = vi.fn()
 
-// Define the PinboardContextType for testing
-interface PinboardContextType {
-  items: PinboardItem[]
-  completedItems: PinboardItem[]
-  addItem: (title: string, deadline?: number, tags?: string[]) => void
-  updateItem: (item: PinboardItem) => void
-  completeItem: (id: string) => void
-  deleteItem: (id: string) => void
-  reorderItems: (items: PinboardItem[]) => void
-  showCompleted: boolean
-  toggleShowCompleted: () => void
-  newItemIds: Set<string>
-  removingItemIds: Set<string>
-  celebratingItemId: string | null
-  setCelebratingItemId: (id: string | null) => void
-}
-
 // Create a mock for usePinboard
 const mockUsePinboard = vi.fn(() => ({
-  items: mockItems,
+  items: [],
   completedItems: [],
   addItem: vi.fn(),
   updateItem: vi.fn(),
@@ -161,15 +128,69 @@ vi.mock('../../context/PinboardContext', () => ({
   ),
 }))
 
-describe('ItemList', () => {
-  it('renders BoardContainer component', () => {
+describe('TagBoard', () => {
+  it('renders correctly with items', () => {
     render(
       <PinboardProvider>
-        <ItemList />
+        <TagBoard tag="ToDo" items={mockItems} />
       </PinboardProvider>,
     )
 
-    // Check if BoardContainer is rendered
-    expect(screen.getByTestId('board-container')).toBeInTheDocument()
+    // Check if tag title is rendered
+    expect(screen.getByText('ToDo')).toBeInTheDocument()
+
+    // Check if DndContext and SortableContext are rendered
+    expect(screen.getByTestId('dnd-context')).toBeInTheDocument()
+    expect(screen.getByTestId('sortable-context')).toBeInTheDocument()
+
+    // Check if all items are rendered
+    for (const item of mockItems) {
+      expect(screen.getByTestId(`item-${item.id}`)).toBeInTheDocument()
+      expect(screen.getByText(item.title)).toBeInTheDocument()
+    }
+  })
+
+  it('renders empty state when no items', () => {
+    render(
+      <PinboardProvider>
+        <TagBoard tag="空のタグ" items={[]} />
+      </PinboardProvider>,
+    )
+
+    // Check if tag title is rendered
+    expect(screen.getByText('空のタグ')).toBeInTheDocument()
+
+    // Check if empty state message is rendered
+    expect(
+      screen.getByText('このタグのアイテムはありません'),
+    ).toBeInTheDocument()
+  })
+
+  it('handles drag end event correctly', () => {
+    render(
+      <PinboardProvider>
+        <TagBoard tag="ToDo" items={mockItems} />
+      </PinboardProvider>,
+    )
+
+    // Simulate drag end event
+    const dragEndEvent = {
+      active: { id: '1' },
+      over: { id: '4' },
+    }
+
+    // Call the onDragEnd handler directly from our mock
+    mockDndContextProps.onDragEnd(dragEndEvent)
+
+    // Check if reorderItems was called with the correct arguments
+    expect(mockReorderItems).toHaveBeenCalledTimes(1)
+
+    // The expected result should be the items array with item 1 moved to position 2
+    const expectedItems = [
+      mockItems[1], // Item 4
+      mockItems[0], // Item 1 (moved to the end)
+    ]
+
+    expect(mockReorderItems).toHaveBeenCalledWith(expectedItems)
   })
 })
