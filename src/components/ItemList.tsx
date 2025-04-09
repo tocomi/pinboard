@@ -1,62 +1,84 @@
-import { useState } from 'react'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  DndContext,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { useMemo } from 'react'
 import { usePinboard } from '../context/PinboardContext'
 import { Item } from './Item'
 
 export function ItemList() {
   const { items, reorderItems } = usePinboard()
-  const [draggedItemId, setDraggedItemId] = useState<string | null>(null)
 
   // Sort items by their order property
-  const sortedItems = [...items].sort((a, b) => a.order - b.order)
+  const sortedItems = useMemo(
+    () => [...items].sort((a, b) => a.order - b.order),
+    [items],
+  )
 
-  const handleDragStart = (id: string) => {
-    setDraggedItemId(id)
-  }
+  // Extract item IDs for SortableContext
+  const itemIds = useMemo(
+    () => sortedItems.map((item) => item.id),
+    [sortedItems],
+  )
 
-  const handleDragOver = (id: string) => {
-    if (!draggedItemId || draggedItemId === id) return
+  // Configure sensors for drag detection
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      // Require a small drag distance to start dragging
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  )
 
-    // Reorder the items
-    const itemsCopy = [...sortedItems]
-    const draggedItemIndex = itemsCopy.findIndex(
-      (item) => item.id === draggedItemId,
-    )
-    const targetItemIndex = itemsCopy.findIndex((item) => item.id === id)
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
 
-    if (draggedItemIndex === -1 || targetItemIndex === -1) return
+    if (!over || active.id === over.id) return
 
-    // Remove the dragged item from the array
-    const [draggedItem] = itemsCopy.splice(draggedItemIndex, 1)
+    // Find the indices of the dragged item and the target item
+    const activeIndex = sortedItems.findIndex((item) => item.id === active.id)
+    const overIndex = sortedItems.findIndex((item) => item.id === over.id)
 
-    // Insert it at the target position
-    itemsCopy.splice(targetItemIndex, 0, draggedItem)
+    if (activeIndex === -1 || overIndex === -1) return
+
+    // Create a new array with the items in the new order
+    const newItems = arrayMove(sortedItems, activeIndex, overIndex)
 
     // Update the order property and save
-    reorderItems(itemsCopy)
-  }
-
-  const handleDragEnd = () => {
-    setDraggedItemId(null)
+    reorderItems(newItems)
   }
 
   if (items.length === 0) {
     return (
-      <div className="mt-4 text-center text-gray-500">
-        アイテムがありません。新しいアイテムを追加してください。
-      </div>
+      <p className="mt-4 text-center text-gray-500 text-lg">
+        All items are completed 🎉🎉🎉
+      </p>
     )
   }
 
   return (
-    <div className="w-full max-w-md" onDragEnd={handleDragEnd}>
-      {sortedItems.map((item) => (
-        <Item
-          key={item.id}
-          item={item}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-        />
-      ))}
+    <div className="w-full max-w-md">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+          {sortedItems.map((item) => (
+            <Item key={item.id} item={item} />
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   )
 }
