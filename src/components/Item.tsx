@@ -1,4 +1,7 @@
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { Clock, Tag } from 'lucide-react'
+import { useMemo } from 'react'
 import { usePinboard } from '../context/PinboardContext'
 import { cn } from '../lib/utils'
 import type { PinboardItem } from '../types'
@@ -8,34 +11,56 @@ import { Card } from './ui/card'
 
 interface ItemProps {
   item: PinboardItem
-  onDragStart: (id: string) => void
-  onDragOver: (id: string) => void
 }
 
-export function Item({ item, onDragStart, onDragOver }: ItemProps) {
+export function Item({ item }: ItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.id })
+
   const { completeItem, deleteItem, newItemIds, removingItemIds } =
     usePinboard()
   const isNewItem = newItemIds.has(item.id)
   const isRemoving = removingItemIds.has(item.id)
 
+  // Apply transform styles for drag movement
+  const style = useMemo(
+    () => ({
+      transform: CSS.Transform.toString(transform),
+      transition,
+      zIndex: isDragging ? 10 : 1,
+      opacity: isDragging ? 0.8 : 1,
+    }),
+    [transform, transition, isDragging],
+  )
+
   // Format deadline if it exists (convert Unix timestamp to Date)
-  const formattedDeadline = item.deadline
-    ? new Date(item.deadline).toLocaleString('ja-JP', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      })
-    : null
+  const formattedDeadline = useMemo(() => {
+    return item.deadline
+      ? new Date(item.deadline).toLocaleString('ja-JP', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+      : null
+  }, [item.deadline])
 
   return (
     <Card
-      draggable
-      onDragStart={() => onDragStart(item.id)}
-      onDragOver={() => onDragOver(item.id)}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
       className={cn(
-        'mb-2 min-h-[58px] cursor-grab p-0 py-2 transition-all duration-500 hover:shadow-md',
+        'mb-2 min-h-[58px] cursor-grab p-0 py-2 transition-colors duration-200 hover:shadow-md',
         isNewItem ? 'animate-slide-in' : '',
         isRemoving ? 'animate-fade-out' : '',
+        isDragging ? 'bg-accent/50 shadow-lg' : '',
       )}
     >
       <div className="flex items-start justify-between px-4">
