@@ -8,8 +8,7 @@
     "build": "tsc && vite build",
     "test": "vitest",
     "format": "biome check --fix --unsafe .",
-    "format:check": "biome check .",
-    "prebuild": "npm run icons"
+    "format:check": "biome check ."
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -79,18 +79,21 @@ const mockItems: PinboardItem[] = [
     title: 'Item 1',
     completed: false,
     order: 0,
+    tags: ['ToDo'],
   },
   {
     id: '2',
     title: 'Item 2',
     completed: false,
     order: 1,
+    tags: ['やりたい'],
   },
   {
     id: '3',
     title: 'Item 3',
     completed: false,
     order: 2,
+    tags: ['目標'],
   },
 ]
 

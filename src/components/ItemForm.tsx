@@ -21,7 +21,7 @@ export function ItemForm({ onClose }: ItemFormProps) {
   const { addItem } = usePinboard()
   const [title, setTitle] = useState('')
   const [deadline, setDeadline] = useState<string>('')
-  const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined)
+  const [selectedTag, setSelectedTag] = useState<string>(TAG_PRESETS[0])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,14 +32,17 @@ export function ItemForm({ onClose }: ItemFormProps) {
     const deadlineTimestamp = deadline
       ? new Date(deadline).getTime()
       : undefined
-    const tagsList = selectedTag ? [selectedTag] : undefined
 
-    addItem(title, deadlineTimestamp, tagsList)
+    addItem({
+      title,
+      tags: [selectedTag],
+      deadline: deadlineTimestamp,
+    })
 
     // Reset form
     setTitle('')
     setDeadline('')
-    setSelectedTag(undefined)
+    setSelectedTag(TAG_PRESETS[0])
   }
 
   return (
@@ -98,10 +101,10 @@ export function ItemForm({ onClose }: ItemFormProps) {
                 htmlFor="tag-select"
                 className="font-medium text-gray-700 text-xs"
               >
-                タグ（選択）
+                タグ（必須）
               </label>
             </div>
-            <Select value={selectedTag} onValueChange={setSelectedTag}>
+            <Select value={selectedTag} onValueChange={setSelectedTag} required>
               <SelectTrigger id="tag-select" className="w-full">
                 <SelectValue placeholder="タグを選択" />
               </SelectTrigger>

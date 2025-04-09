@@ -63,7 +63,7 @@ export function Item({ item }: ItemProps) {
         isDragging ? 'bg-accent/50 shadow-lg' : '',
       )}
     >
-      <div className="flex items-start justify-between px-4">
+      <div className="flex justify-between px-4">
         <div className="flex-1">
           <h3 className="font-medium text-sm">{item.title}</h3>
 
