@@ -22,7 +22,7 @@ function AppContent() {
         <header>
           <h1 className="mb-6 text-center font-bold text-4xl">Pinboard</h1>
         </header>
-        <main className="flex w-full max-w-md flex-col items-center">
+        <main className="flex w-full flex-col items-center">
           <ItemList />
           <ToggleCompletedButton />
           <CompletedItems />

@@ -2,7 +2,7 @@ export interface PinboardItem {
   id: string
   title: string
   deadline?: number
-  tags?: string[]
+  tags: string[]
   completed: boolean
   order: number
 }

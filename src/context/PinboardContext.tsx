@@ -4,7 +4,15 @@ import type { PinboardItem } from '../types'
 interface PinboardContextType {
   items: PinboardItem[]
   completedItems: PinboardItem[]
-  addItem: (title: string, deadline?: number, tags?: string[]) => void
+  addItem: ({
+    title,
+    tags,
+    deadline,
+  }: {
+    title: string
+    tags: string[]
+    deadline?: number
+  }) => void
   updateItem: (item: PinboardItem) => void
   completeItem: (id: string) => void
   deleteItem: (id: string) => void
@@ -48,7 +56,14 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
           'completedItems',
         ])
         if (result.items) {
-          setItems(result.items as PinboardItem[])
+          // タグなしアイテムにデフォルトタグを割り当て
+          const itemsWithTags = (result.items as PinboardItem[]).map((item) => {
+            if (!item.tags || item.tags.length === 0) {
+              return { ...item, tags: ['ToDo'] } // デフォルトタグを割り当て
+            }
+            return item
+          })
+          setItems(itemsWithTags)
         }
         if (result.completedItems) {
           setCompletedItems(result.completedItems as PinboardItem[])
@@ -74,7 +89,11 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     saveItems()
   }, [items, completedItems])
 
-  const addItem = (title: string, deadline?: number, tags?: string[]) => {
+  const addItem = ({
+    title,
+    tags,
+    deadline,
+  }: { title: string; deadline?: number; tags: string[] }) => {
     const newItem: PinboardItem = {
       id: crypto.randomUUID(),
       title,

@@ -16,6 +16,7 @@ export default defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     browser: {
       enabled: true,
+      headless: true,
       provider: 'playwright',
       name: 'chromium',
     },
