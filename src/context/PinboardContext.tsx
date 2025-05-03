@@ -16,7 +16,7 @@ interface PinboardContextType {
   updateItem: (item: PinboardItem) => void
   completeItem: (id: string) => void
   deleteItem: (id: string) => void
-  reorderItems: (items: PinboardItem[]) => void
+  reorderItems: (items: PinboardItem[], tag?: string) => void
   showCompleted: boolean
   toggleShowCompleted: () => void
   newItemIds: Set<string>
@@ -172,14 +172,30 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     }, 500) // Animation duration
   }
 
-  const reorderItems = (reorderedItems: PinboardItem[]) => {
-    // Update the order property based on the new order
-    const updatedItems = reorderedItems.map((item, index) => ({
-      ...item,
-      order: index,
-    }))
+  const reorderItems = (reorderedItems: PinboardItem[], tag?: string) => {
+    if (!tag) {
+      // 後方互換: タグが指定されていない場合は従来通り全体を上書き
+      const updatedItems = reorderedItems.map((item, index) => ({
+        ...item,
+        order: index,
+      }))
+      setItems(updatedItems)
+      return
+    }
 
-    setItems(updatedItems)
+    setItems((prevItems) => {
+      // タグ内のアイテムだけorderを更新し、配列の順序自体は変えない
+      const orderMap = new Map(
+        reorderedItems.map((item, idx) => [item.id, idx]),
+      )
+      return prevItems.map((item) => {
+        if (orderMap.has(item.id)) {
+          const newOrder = orderMap.get(item.id)
+          return { ...item, order: newOrder ?? item.order }
+        }
+        return item
+      })
+    })
   }
 
   const toggleShowCompleted = () => {

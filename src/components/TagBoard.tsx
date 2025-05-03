@@ -61,7 +61,7 @@ export function TagBoard({ tag, items }: TagBoardProps) {
     const newItems = arrayMove(sortedItems, activeIndex, overIndex)
 
     // Update the order property and save
-    reorderItems(newItems)
+    reorderItems(newItems, tag)
   }
 
   if (items.length === 0) {
