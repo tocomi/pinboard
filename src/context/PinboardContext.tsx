@@ -218,6 +218,31 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
     setCelebratingItemId,
   }
 
+  // デバッグ用: 各カテゴリに5つずつダミーデータを追加する関数（本番ロジックにはexportしない）
+  function __debugAddSampleItems() {
+    const tags = ['ToDo', 'やりたい', '目標']
+    const now = Date.now()
+    const items: PinboardItem[] = []
+    tags.forEach((tag, tIdx) => {
+      for (let i = 0; i < 5; i++) {
+        items.push({
+          id: crypto.randomUUID(),
+          title: `${tag}のタスク${i + 1}`,
+          tags: [tag],
+          completed: false,
+          order: i,
+          deadline: now + (i + tIdx) * 86400000,
+        })
+      }
+    })
+    setItems(items)
+  }
+
+  // 開発時のみwindowに登録
+  if (typeof window !== 'undefined') {
+    window.__debugAddSampleItems = __debugAddSampleItems
+  }
+
   return (
     <PinboardContext.Provider value={value}>
       {children}

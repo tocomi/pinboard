@@ -9,6 +9,9 @@ import { ToggleCompletedButton } from './components/ToggleCompletedButton'
 import { PinboardProvider, usePinboard } from './context/PinboardContext'
 import { cn } from './lib/utils'
 
+// デバッグ用ボタン（開発時のみ表示）
+const isDev = process.env.NODE_ENV !== 'production'
+
 function AppContent() {
   const { celebratingItemId, setCelebratingItemId } = usePinboard()
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -16,11 +19,30 @@ function AppContent() {
   const openForm = () => setIsFormOpen(true)
   const closeForm = () => setIsFormOpen(false)
 
+  // デバッグ用ダミーデータ生成ボタン
+  const handleDebugAdd = () => {
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.__debugAddSampleItems === 'function'
+    ) {
+      window.__debugAddSampleItems()
+    }
+  }
+
   return (
     <>
       <div className="flex min-h-screen flex-col items-center bg-gray-100 p-4">
         <header>
           <h1 className="mb-6 text-center font-bold text-4xl">Pinboard</h1>
+          {isDev && (
+            <button
+              type="button"
+              className="ml-4 rounded bg-pink-500 px-3 py-1 text-white hover:bg-pink-600"
+              onClick={handleDebugAdd}
+            >
+              デバッグ用ダミーデータ生成
+            </button>
+          )}
         </header>
         <main className="flex w-full flex-col items-center">
           <ItemList />
