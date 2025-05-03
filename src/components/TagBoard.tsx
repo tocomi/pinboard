@@ -78,7 +78,7 @@ export function TagBoard({ tag, items }: TagBoardProps) {
   return (
     <Card className="flex h-auto min-h-[200px] w-[350px] flex-col p-4">
       <h2 className="mb-4 font-bold text-lg">{tag}</h2>
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
