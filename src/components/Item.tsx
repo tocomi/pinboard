@@ -1,13 +1,15 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Clock, Tag } from 'lucide-react'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { usePinboard } from '../context/PinboardContext'
 import { cn } from '../lib/utils'
 import type { PinboardItem } from '../types'
+import { ItemForm } from './ItemForm'
 import { LongPressButton } from './LongPressButton'
 import { Badge } from './ui/badge'
 import { Card } from './ui/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 
 interface ItemProps {
   item: PinboardItem
@@ -23,10 +25,13 @@ export function Item({ item }: ItemProps) {
     isDragging,
   } = useSortable({ id: item.id })
 
-  const { completeItem, deleteItem, newItemIds, removingItemIds } =
+  const { completeItem, deleteItem, newItemIds, removingItemIds, updateItem } =
     usePinboard()
   const isNewItem = newItemIds.has(item.id)
   const isRemoving = removingItemIds.has(item.id)
+
+  // 編集モーダル状態
+  const [open, setOpen] = useState(false)
 
   // Apply transform styles for drag movement
   const style = useMemo(
@@ -51,62 +56,93 @@ export function Item({ item }: ItemProps) {
   }, [item.deadline])
 
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={cn(
-        'mb-2 min-h-[58px] cursor-grab p-0 py-2 transition-colors duration-200 hover:shadow-md',
-        isNewItem ? 'animate-slide-in' : '',
-        isRemoving ? 'animate-fade-out' : '',
-        isDragging ? 'bg-accent/50 shadow-lg' : '',
-      )}
-    >
-      <div className="flex justify-between px-4">
-        <div className="flex-1">
-          <h3 className="font-medium text-sm">{item.title}</h3>
+    <>
+      <Card
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={cn(
+          'group relative mb-2 min-h-[58px] cursor-grab p-0 py-2 transition-colors duration-200 hover:shadow-md',
+          isNewItem ? 'animate-slide-in' : '',
+          isRemoving ? 'animate-fade-out' : '',
+          isDragging ? 'bg-accent/50 shadow-lg' : '',
+        )}
+      >
+        <div className="flex justify-between px-4">
+          <div className="flex-1">
+            <h3 className="font-medium text-sm">{item.title}</h3>
 
-          <div className="mt-1 flex flex-wrap items-center gap-x-3">
-            {formattedDeadline && (
-              <div className="flex items-center gap-1 text-muted-foreground text-xs">
-                <Clock className="h-3 w-3" />
-                <span>{formattedDeadline}</span>
-              </div>
-            )}
+            <div className="mt-1 flex flex-wrap items-center gap-x-3">
+              {formattedDeadline && (
+                <div className="flex items-center gap-1 text-muted-foreground text-xs">
+                  <Clock className="h-3 w-3" />
+                  <span>{formattedDeadline}</span>
+                </div>
+              )}
 
-            {item.tags && item.tags.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1">
-                <Tag className="h-3 w-3 text-muted-foreground" />
-                {item.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="secondary"
-                    className="h-4 px-2 py-0 text-xs"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            )}
+              {item.tags && item.tags.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1">
+                  <Tag className="h-3 w-3 text-muted-foreground" />
+                  {item.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="h-4 px-2 py-0 text-xs"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="ml-2 flex min-h-10 items-center gap-2">
+            <LongPressButton
+              color="green"
+              icon="✓"
+              label="完了"
+              onLongPressComplete={() => completeItem(item.id)}
+            />
+            <LongPressButton
+              color="red"
+              icon="×"
+              label="削除"
+              onLongPressComplete={() => deleteItem(item.id)}
+            />
+            {/* 編集ボタン（元のインライン・テキスト表示に戻す） */}
+            <button
+              type="button"
+              className="rounded bg-gray-200 px-2 py-1 text-gray-700 text-xs hover:bg-gray-300"
+              aria-label="編集"
+              onClick={() => setOpen(true)}
+            >
+              編集
+            </button>
           </div>
         </div>
-
-        <div className="ml-2 flex min-h-10 items-center gap-2">
-          <LongPressButton
-            color="green"
-            icon="✓"
-            label="完了"
-            onLongPressComplete={() => completeItem(item.id)}
+      </Card>
+      {/* 編集モーダル */}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>アイテムを編集</DialogTitle>
+          </DialogHeader>
+          <ItemForm
+            item={item}
+            isEdit
+            onClose={() => setOpen(false)}
+            onSave={(updated) => {
+              updateItem(updated)
+              setOpen(false)
+            }}
           />
-          <LongPressButton
-            color="red"
-            icon="×"
-            label="削除"
-            onLongPressComplete={() => deleteItem(item.id)}
-          />
-        </div>
-      </div>
-    </Card>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
