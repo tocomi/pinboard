@@ -98,7 +98,7 @@ export function Item({ item }: ItemProps) {
             </div>
           </div>
 
-          <div className="ml-2 flex min-h-10 items-center gap-2">
+          <div className="-translate-y-1/2 pointer-events-none absolute top-1/2 right-4 z-10 flex min-h-10 items-center gap-2 bg-white/80 px-2 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
             <LongPressButton
               color="green"
               icon="✓"
