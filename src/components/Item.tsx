@@ -111,14 +111,15 @@ export function Item({ item }: ItemProps) {
               label="削除"
               onLongPressComplete={() => deleteItem(item.id)}
             />
-            {/* 編集ボタン（元のインライン・テキスト表示に戻す） */}
             <button
               type="button"
-              className="rounded bg-gray-200 px-2 py-1 text-gray-700 text-xs hover:bg-gray-300"
+              className="relative flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-gray-200 text-gray-700 text-xs hover:bg-gray-300"
               aria-label="編集"
               onClick={() => setOpen(true)}
             >
-              編集
+              <span className="absolute inset-0 flex items-center justify-center">
+                ✎
+              </span>
             </button>
           </div>
         </div>
