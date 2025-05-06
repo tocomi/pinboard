@@ -227,7 +227,7 @@ export function PinboardProvider({ children }: { children: React.ReactNode }) {
       for (let i = 0; i < 5; i++) {
         items.push({
           id: crypto.randomUUID(),
-          title: `${tag}のタスク${i + 1}`,
+          title: `${tag}のタスク${i + 1}`.repeat(i + 1),
           tags: [tag],
           completed: false,
           order: i,
