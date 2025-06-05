@@ -1,7 +1,7 @@
-import { render, act, waitFor } from '@testing-library/react'
+import { act, render, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import type { PinboardItem } from '../../types'
-import { usePinboardState, type PinboardContextType } from '../usePinboardState'
+import { type PinboardContextType, usePinboardState } from '../usePinboardState'
 
 function HookTester({
   storage,
@@ -35,7 +35,12 @@ describe('usePinboardState', () => {
     let result: PinboardContextType | undefined
     await act(async () => {
       render(
-        <HookTester storage={mockStorage} onReady={(s) => (result = s)} />,
+        <HookTester
+          storage={mockStorage}
+          onReady={(s) => {
+            result = s
+          }}
+        />,
       )
     })
 
@@ -54,7 +59,14 @@ describe('usePinboardState', () => {
     }
 
     let state: PinboardContextType | undefined
-    render(<HookTester storage={mockStorage} onReady={(s) => (state = s)} />)
+    render(
+      <HookTester
+        storage={mockStorage}
+        onReady={(s) => {
+          state = s
+        }}
+      />,
+    )
 
     act(() => {
       state?.addItem({ title: 'new', tags: ['ToDo'] })

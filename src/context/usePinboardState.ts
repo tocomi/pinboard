@@ -39,7 +39,9 @@ export function usePinboardState(
   const [showCompleted, setShowCompleted] = useState(false)
   const [newItemIds, setNewItemIds] = useState<Set<string>>(new Set())
   const [removingItemIds, setRemovingItemIds] = useState<Set<string>>(new Set())
-  const [celebratingItemId, setCelebratingItemId] = useState<string | null>(null)
+  const [celebratingItemId, setCelebratingItemId] = useState<string | null>(
+    null,
+  )
 
   useEffect(() => {
     const loadItems = async () => {
@@ -106,7 +108,9 @@ export function usePinboardState(
 
   const updateItem = (updatedItem: PinboardItem) => {
     setItems((prevItems) =>
-      prevItems.map((item) => (item.id === updatedItem.id ? updatedItem : item)),
+      prevItems.map((item) =>
+        item.id === updatedItem.id ? updatedItem : item,
+      ),
     )
   }
 
@@ -159,7 +163,9 @@ export function usePinboardState(
     }
 
     setItems((prevItems) => {
-      const orderMap = new Map(reorderedItems.map((item, idx) => [item.id, idx]))
+      const orderMap = new Map(
+        reorderedItems.map((item, idx) => [item.id, idx]),
+      )
       return prevItems.map((item) => {
         if (orderMap.has(item.id)) {
           const newOrder = orderMap.get(item.id)
