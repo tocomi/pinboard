@@ -30,7 +30,9 @@ describe('usePinboardState', () => {
     const mockStorage = {
       get: vi.fn().mockResolvedValue({ items: mockItems, completedItems: [] }),
       set: vi.fn().mockResolvedValue(undefined),
-    }
+      remove: vi.fn(),
+      clear: vi.fn(),
+    } as unknown as chrome.storage.StorageArea
 
     let result: PinboardContextType | undefined
     await act(async () => {
@@ -56,7 +58,9 @@ describe('usePinboardState', () => {
     const mockStorage = {
       get: vi.fn().mockResolvedValue({}),
       set: vi.fn().mockResolvedValue(undefined),
-    }
+      remove: vi.fn(),
+      clear: vi.fn(),
+    } as unknown as chrome.storage.StorageArea
 
     let state: PinboardContextType | undefined
     render(
