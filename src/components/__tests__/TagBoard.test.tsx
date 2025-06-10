@@ -191,6 +191,6 @@ describe('TagBoard', () => {
       mockItems[0], // Item 1 (moved to the end)
     ]
 
-    expect(mockReorderItems).toHaveBeenCalledWith(expectedItems)
+    expect(mockReorderItems).toHaveBeenCalledWith(expectedItems, 'ToDo')
   })
 })
